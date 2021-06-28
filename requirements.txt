@@ -1,0 +1,2 @@
+# Add PRODUCTION pip dependencies in this file.
+# $ pip freeze > requirements.txt
