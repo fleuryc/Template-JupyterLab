@@ -9,3 +9,7 @@ def main() -> int:
         int: zero
     """
     return 0
+
+
+if __name__ == "__main__":
+    main()

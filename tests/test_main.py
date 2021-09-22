@@ -1,8 +1,8 @@
-from .context import sample
+from .context import src
 
 
 def test_main():
-    assert sample.main() == 0, "Should be 0"
+    assert src.main() == 0, "Should be 0"
 
 
 if __name__ == "__main__":
