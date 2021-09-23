@@ -24,12 +24,12 @@ jobs:
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Lint with flake8
       run: |
-        flake8 --count --show-source --statistics
+        flake8 --count --show-source --statistics src/ tests/
     - name: Type check with mypy
       run: |
-        mypy 
+        mypy --install-types --non-interactive src/ tests/
     - name: Test with pytest
       env:
         VARIABLE_NAME: ${{ secrets.variable_value }}
       run: |
-        pytest --cov
+        pytest --cov=src/ --cov-report=xml:cobertura.xml tests/

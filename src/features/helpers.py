@@ -27,8 +27,6 @@ def drop_impossible_values(
     for col in dataframe.columns:
         if col in constraints:
             dataframe = dataframe[
-                dataframe[col].between(
-                    constraints[col]["min"], constraints[col]["max"]
-                )
+                dataframe[col].between(constraints[col]["min"], constraints[col]["max"])
             ]
     return dataframe

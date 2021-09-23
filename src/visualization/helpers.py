@@ -39,12 +39,8 @@ def plot_oneway_anova_p_values(
 
     for col in dataframe.select_dtypes("number").columns:
         anova.loc[col, "p_value"] = f_oneway(
-            dataframe.loc[
-                dataframe[categorical_column] == classes[0], col
-            ].dropna(),
-            dataframe.loc[
-                dataframe[categorical_column] == classes[1], col
-            ].dropna(),
+            dataframe.loc[dataframe[categorical_column] == classes[0], col].dropna(),
+            dataframe.loc[dataframe[categorical_column] == classes[1], col].dropna(),
         )[1]
 
     # Plot the bar chart with Plotly Express
@@ -188,9 +184,7 @@ def plot_boxes(
     Returns : None
     """
     if plot_columns is None:
-        plot_columns = dataframe.select_dtypes(
-            include="number"
-        ).columns.tolist()
+        plot_columns = dataframe.select_dtypes(include="number").columns.tolist()
 
     for col in plot_columns:
         fig = px.box(

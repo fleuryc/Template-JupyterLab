@@ -66,7 +66,10 @@ def find_best_params_classifier(
         verbose=0,
         n_jobs=-1,
         random_state=42,
-    ).fit(X=X_train, y=y_train,)
+    ).fit(
+        X=X_train,
+        y=y_train,
+    )
 
     start_time = time()
     y_pred = clf.predict(X_test)
@@ -136,14 +139,10 @@ def automl_classifier(
     return {
         "model": clf,
         "params": clf.get_params(),
-        "score": float(
-            pd.DataFrame(clf.cv_results_)[["mean_test_score"]].max()
-        ),
+        "score": float(pd.DataFrame(clf.cv_results_)[["mean_test_score"]].max()),
         "predict_time": predict_time,
         "cv_results_": clf.cv_results_,
-        "best_index_": int(
-            pd.DataFrame(clf.cv_results_)[["mean_test_score"]].idxmax()
-        ),
+        "best_index_": int(pd.DataFrame(clf.cv_results_)[["mean_test_score"]].idxmax()),
         "confusion_matrix": confusion_matrix(y_test, y_pred),
         "f1": f1_score(y_test, y_pred),
         "accuracy": accuracy_score(y_test, y_pred),
