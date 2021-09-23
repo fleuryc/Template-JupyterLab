@@ -6,7 +6,7 @@ from typing import Any, Union
 
 import pandas as pd
 from sklearn.base import ClassifierMixin, is_classifier
-from sklearn.experimental import enable_halving_search_cv
+from sklearn.experimental import enable_halving_search_cv  # noqa: F401
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -66,10 +66,7 @@ def find_best_params_classifier(
         verbose=0,
         n_jobs=-1,
         random_state=42,
-    ).fit(
-        X=X_train,
-        y=y_train,
-    )
+    ).fit(X=X_train, y=y_train,)
 
     start_time = time()
     y_pred = clf.predict(X_test)
