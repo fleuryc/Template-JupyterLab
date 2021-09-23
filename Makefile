@@ -73,7 +73,7 @@ endif
 
 ## Lint using flake8
 lint:
-	flake8 src/ tests/
+	flake8 --count --show-source --statistics src/ tests/
 
 ## Format using black
 format:
@@ -81,11 +81,11 @@ format:
 
 ## Type check using mypy
 mypy:
-	mypy src/ tests/
+	mypy --install-types --non-interactive src/ tests/
 
 ## Test and produce coverage report using pytest
 test:
-	pytest --cov=src/ --cov-report=xml:cobertura.xml tests/
+	pytest --cov-report=xml:cobertura.xml --cov=src/ tests/
 
 ## Delete test files
 clean-test:
