@@ -1,5 +1,4 @@
-"""Main package
-"""
+"""Main package"""
 
 
 def main() -> int:
