@@ -2,7 +2,7 @@ appdirs==1.4.4
 attrs==21.2.0
 black==21.6b0
 click==8.0.1
-coverage==5.5
+coverage==6.0.2
 flake8==3.9.2
 iniconfig==1.1.1
 isort==5.9.1
