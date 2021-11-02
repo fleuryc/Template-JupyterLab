@@ -2,8 +2,7 @@
 
 
 def main() -> int:
-    """
-    Main function
+    """Main function.
 
     Returns:
         int: zero
