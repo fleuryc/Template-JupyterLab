@@ -5,6 +5,8 @@ import logging
 import os
 import zipfile
 
+import numpy as np
+import pandas as pd
 import requests
 
 
@@ -13,7 +15,8 @@ def download_extract_zip(
     files_names: tuple[str],
     target_path: str,
 ) -> None:
-    """Download Zip from url and extract content files to local path.
+    """
+    Download Zip from url and extract content files to local path.
 
     - Check if content files already exist.
         - If they all exist, return.
@@ -64,3 +67,73 @@ def download_extract_zip(
     logging.info(f"Extracting {zip_file_url} to {target_path}")
     z.extractall(target_path)
     logging.info(f"Extracted {zip_file_url} to {target_path}")
+
+
+def reduce_dataframe_memory_usage(
+    df: pd.DataFrame,
+    high_precision: bool = False,
+) -> pd.DataFrame:
+    """
+    Iterate through all the columns of a dataframe and modify the data type to
+    reduce memory usage.
+
+    Args:
+        df (pd.DataFrame): dataframe to reduce memory usage.
+        high_precision (bool): If True, use 64-bit floats instead of 32-bit
+
+    Returns:
+        pd.DataFrame: dataframe with reduced memory usage.
+    """
+    start_mem = round(df.memory_usage().sum() / 1024 ** 2, 2)
+    logging.info(f"Memory usage of dataframe is {start_mem} MB")
+
+    # Iterate through columns
+    for col in df.columns:
+        if df[col].dtype == "object":
+            # "object" dtype
+            if df[col].nunique() < max(100, df.shape[0] / 100):
+                # If number of unique values is less than max(100, 1%)
+                df[col] = df[col].astype("category")
+            else:
+                # If number of unique values is greater than max(100, 1%)
+                df[col] = df[col].astype("string")
+
+        elif str(df[col].dtype)[:3] == "int":
+            # "int" dtype
+            c_min = df[col].min()
+            c_max = df[col].max()
+            if c_min > np.iinfo(np.uint8).min and c_max < np.iinfo(np.uint8).max:
+                df[col] = df[col].astype("UInt8")
+            elif c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                df[col] = df[col].astype("Int8")
+            elif c_min > np.iinfo(np.uint16).min and c_max < np.iinfo(np.uint16).max:
+                df[col] = df[col].astype("UInt16")
+            elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
+                df[col] = df[col].astype("Int16")
+            elif c_min > np.iinfo(np.uint32).min and c_max < np.iinfo(np.uint32).max:
+                df[col] = df[col].astype("UInt32")
+            elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+                df[col] = df[col].astype("Int32")
+            elif c_min > np.iinfo(np.uint64).min and c_max < np.iinfo(np.uint64).max:
+                df[col] = df[col].astype("UInt64")
+            else:
+                df[col] = df[col].astype("Int64")
+
+        elif str(df[col].dtype)[:5] == "float":
+            # "float" dtype
+            c_min = df[col].min()
+            c_max = df[col].max()
+            if (
+                not high_precision
+                and c_min > np.finfo(np.float32).min
+                and c_max < np.finfo(np.float32).max
+            ):
+                df[col] = df[col].astype("float32")
+            else:
+                df[col] = df[col].astype("float64")
+
+    end_mem = round(df.memory_usage().sum() / 1024 ** 2, 2)
+    logging.info(f"Memory usage after optimization is {end_mem} MB")
+    logging.info(f"Decreased by {round(100 * (start_mem - end_mem) / start_mem)} MB")
+
+    return df

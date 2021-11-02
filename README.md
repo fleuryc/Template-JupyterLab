@@ -3,6 +3,18 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b03fbc514ea44fce83fe471896566cfd)](https://www.codacy.com/gh/fleuryc/Template-Python/dashboard)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/b03fbc514ea44fce83fe471896566cfd)](https://www.codacy.com/gh/fleuryc/Template-Python/dashboard)
 
+- [Project](#project)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Virtual environment](#virtual-environment)
+    - [Dependencies](#dependencies)
+  - [Usage](#usage)
+    - [Run](#run)
+    - [Quality Assurance](#quality-assurance)
+  - [Troubleshooting](#troubleshooting)
+
+* * *
+
 # Project
 
 -   What ?
@@ -17,16 +29,21 @@
 -   external programs
 -   compatible versions
 
+### Virtual environment
+
 ```bash
-make install
+make venv
+source env/bin/activate
 ```
 
 ### Dependencies
 
--   Pip
-
 ```bash
-pip install -r requirements.txt
+# pip install kaggle jupyterlab ipywidgets numpy pandas scipy statsmodels sklearn plotly matplotlib
+# > or :
+# pip install -r requirements.txt
+# > or :
+make install
 ```
 
 ## Usage
@@ -35,10 +52,17 @@ pip install -r requirements.txt
 
 -   execution instructions
 
-### Test
+### Quality Assurance
 
 ```bash
-make test
+# make isort
+# make format
+# make lint
+# make bandit
+# make mypy
+# make test
+# > or just :
+make qa
 ```
 
 ## Troubleshooting

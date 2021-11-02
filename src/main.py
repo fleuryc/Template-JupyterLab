@@ -1,8 +1,9 @@
-"""Main package"""
+"""Main package."""
 
 
 def main() -> int:
-    """Main function
+    """
+    Main function
 
     Returns:
         int: zero
