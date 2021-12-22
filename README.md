@@ -39,10 +39,10 @@ source env/bin/activate
 ### Dependencies
 
 ```bash
-# pip install kaggle jupyterlab ipywidgets numpy pandas scipy statsmodels sklearn plotly matplotlib
+# pip install jupyterlab ipykernel ipywidgets widgetsnbextension graphviz python-dotenv requests matplotlib seaborn plotly numpy
 # > or :
 # pip install -r requirements.txt
-# > or :
+# > or just :
 make install
 ```
 

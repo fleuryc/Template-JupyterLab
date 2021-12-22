@@ -1,12 +1,11 @@
 """Helper functions, not project specific."""
-import logging
 import warnings
 from time import time
 from typing import Any, Union
 
 import pandas as pd
 from sklearn.base import ClassifierMixin, is_classifier
-from sklearn.experimental import enable_halving_search_cv  # noqa: F401
+from sklearn.experimental import enable_halving_search_cv  # noqa: F401,W0611
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -49,7 +48,6 @@ def find_best_params_classifier(
         dict[str, Any]: Classifier optimization results.
     """
     if not is_classifier(estimator):
-        logging.error(f"{estimator} is not a classifier.")
         raise ValueError(f"{estimator} is not a classifier.")
 
     clf = HalvingRandomSearchCV(
@@ -109,7 +107,8 @@ def automl_classifier(
     y_test: pd.Series,
     estimator: ClassifierMixin,
 ) -> dict[str, Any]:
-    """Runs AutoML to find the best estimator.
+    """
+    Runs AutoML to find the best estimator.
 
     Args:
         X_train (pd.DataFrame): training data
@@ -125,7 +124,6 @@ def automl_classifier(
         dict[str, Any]: Classifier optimization results.
     """
     if not is_classifier(estimator):
-        logging.error(f"{estimator} is not a classifier.")
         raise ValueError(f"{estimator} is not a classifier.")
 
     clf = estimator.fit(X_train, y_train)

@@ -50,15 +50,34 @@ check-venv: ## Check that virtual environment is active
 	@echo ">>> OK."
 	@echo ""
 
-.PHONY: freeze
-freeze: check-system check-venv ## Create requirements.txt file
+requirements-dev.txt: check-system check-venv ## Create requirements-dev.txt file
+	@echo ">>> Creating 'requirements-dev.txt' file..."
+	pip install --upgrade pip
+	pip install --upgrade isort black "black[jupyter]" flake8 bandit mypy \
+		pytest pytest-cov
+	pip freeze | grep -v "pkg_resources" > requirements-dev.txt
+	@echo ">>> OK."
+	@echo ""
+
+requirements.txt: check-system check-venv ## Create requirements.txt file
 	@echo ">>> Creating 'requirements.txt' file..."
-	pip freeze > requirements.txt
+	pip install --upgrade pip
+	pip install --upgrade jupyterlab ipykernel ipywidgets widgetsnbextension \
+		graphviz python-dotenv requests matplotlib seaborn plotly numpy \
+		statsmodels pandas sklearn 
+	pip freeze | grep -v "pkg_resources" > requirements.txt
+	@echo ">>> OK."
+	@echo ""
+
+.PHONY: deps-dev
+deps-dev: check-system check-venv requirements-dev.txt ## Install dependencies with pip
+	@echo ">>> Installing dev dependancies from 'requirements-dev.txt' file..."
+	pip install -r requirements-dev.txt
 	@echo ">>> OK."
 	@echo ""
 
 .PHONY: deps
-deps: requirements.txt check-system check-venv ## Install dependencies with pip
+deps: check-system check-venv requirements.txt ## Install dependencies with pip
 	@echo ">>> Installing dependancies from 'requirements.txt' file..."
 	pip install -r requirements.txt
 	@echo ">>> OK."
@@ -70,7 +89,7 @@ deps: requirements.txt check-system check-venv ## Install dependencies with pip
 	@echo ""
 
 .PHONY: install
-install: check-system check-venv deps ## Check system and venv, and install dependencies
+install: check-system check-venv deps-dev deps ## Check system and venv, and install dependencies
 
 .PHONY: isort
 isort: ## Sort imports with Isort
@@ -82,7 +101,7 @@ isort: ## Sort imports with Isort
 .PHONY: format
 format: ## Format with Black
 	@echo ">>> Formatting code..."
-	black src/ tests/
+	black notebooks/ src/ tests/
 	@echo ">>> OK."
 	@echo ""
 
@@ -140,15 +159,8 @@ clean-pycache: ## Remove python cache files
 
 .PHONY: dataset
 dataset: ## Download and extract dataset from Kaggle
-	@echo ">>> Downloading and extracting data files..."
-	@if [ ! -f "data/raw/data.csv" ] ; \
-	then \
-		echo "Downloading data..." ; \
-		echo "Unzipping data..."; \
-		echo "Done."; \
-	else \
-		echo "Data files already downloaded."; \
-	fi
+	@echo ">>> Downloading and saving data files..."
+	python -m src.data.make-dataset -t data/raw/api/
 	@echo ">>> OK."
 	@echo ""
 
@@ -162,12 +174,19 @@ clean-dataset: ## Delete data files
 .PHONY: clean-notebook
 clean-notebook: ## Remove notebook cache and checkpoint files
 	@echo ">>> Removing Notebook artifacts..."
-	rm -rf ./**/.ipynb_checkpoints
+	rm -rf .ipynb_checkpoints/ ./**/.ipynb_checkpoints/ ./**/*-checkpoint.ipynb
+	@echo ">>> OK."
+	@echo ""
+
+.PHONY: clean-reults
+clean-reults: ## Delete result files
+	@echo ">>> Removing result files..."
+	find ./results/ -type f -not -name ".gitignore" -delete
 	@echo ">>> OK."
 	@echo ""
 
 .PHONY: clean
-clean: clean-venv clean-mypy clean-test clean-pycache clean-dataset clean-notebook ## Remove all file artifacts
+clean: clean-venv clean-mypy clean-test clean-pycache clean-dataset clean-notebook clean-results ## Remove all file artifacts
 
 .PHONY: help
 help:

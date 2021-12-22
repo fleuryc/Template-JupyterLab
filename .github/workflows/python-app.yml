@@ -27,6 +27,9 @@ jobs:
       - name: Type check with mypy
         run: |
           mypy --install-types --non-interactive src/ tests/
+      - name: Security check with bandit
+        run: |
+          bandit --recursive src/ tests/
       - name: Test with pytest and report coverage to Codacy
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
