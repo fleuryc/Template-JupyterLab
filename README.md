@@ -9,7 +9,7 @@
     - [Virtual environment](#virtual-environment)
     - [Dependencies](#dependencies)
   - [Usage](#usage)
-    - [Run](#run)
+    - [Run Notebook](#run-notebook)
     - [Quality Assurance](#quality-assurance)
   - [Troubleshooting](#troubleshooting)
 
@@ -25,13 +25,13 @@
 
 ### Prerequisites
 
--   environment variables
--   external programs
--   compatible versions
+-   [Python 3.9](https://www.python.org/downloads/)
 
 ### Virtual environment
 
 ```bash
+# python -m venv env
+# > or just :
 make venv
 source env/bin/activate
 ```
@@ -39,7 +39,7 @@ source env/bin/activate
 ### Dependencies
 
 ```bash
-# pip install jupyterlab ipykernel ipywidgets widgetsnbextension graphviz python-dotenv requests matplotlib seaborn plotly numpy
+# pip install kaggle jupyterlab ipykernel ipywidgets widgetsnbextension graphviz python-dotenv requests matplotlib seaborn plotly shap numpy statsmodels pandas sklearn nltk gensim pyLDAvis spacy transformers tensorflow
 # > or :
 # pip install -r requirements.txt
 # > or just :
@@ -48,9 +48,11 @@ make install
 
 ## Usage
 
-### Run
+### Run Notebook
 
--   execution instructions
+```bash
+jupyter-lab notebooks/main.ipynb
+```
 
 ### Quality Assurance
 
@@ -67,5 +69,17 @@ make qa
 
 ## Troubleshooting
 
--   known issues
--   how to fix them
+-   Fix Plotly issues with JupyterLab
+
+cf. [Plotly troubleshooting](https://plotly.com/python/troubleshooting/#jupyterlab-problems)
+
+```bash
+jupyter labextension install jupyterlab-plotly
+```
+
+-   If using Jupyter Notebook instead of JupyterLab, uncomment the following lines in the notebook
+
+```python
+import plotly.io as pio
+pio.renderers.default='notebook'
+```

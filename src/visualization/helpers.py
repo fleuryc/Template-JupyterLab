@@ -1,14 +1,12 @@
 """Helper functions, not project specific."""
 import logging
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
-import pandas
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as graph_objects
+import plotly.graph_objects as go
 import plotly.io as pio
 from numpy import exp
 from numpy.core.fromnumeric import repeat, shape  # noqa: F401,W0611
@@ -17,14 +15,14 @@ from sklearn.base import ClassifierMixin, is_classifier
 from sklearn.decomposition import PCA
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import (
-    plot_confusion_matrix,
-    plot_precision_recall_curve,
-    plot_roc_curve,
+    ConfusionMatrixDisplay,
+    PrecisionRecallDisplay,
+    RocCurveDisplay,
 )
 
 # Set the default theme
-template = graph_objects.layout.Template()
-template.layout = graph_objects.Layout(
+template = go.layout.Template()
+template.layout = go.Layout(
     title_x=0.5,
     # border width and size
     margin=dict(l=2, r=2, b=2, t=30),
@@ -42,11 +40,11 @@ template.layout = graph_objects.Layout(
     scene_camera=dict(eye=dict(x=1.5, y=1.5, z=0.1)),
 )
 
-template.data.scatter = [graph_objects.Scatter(marker=dict(opacity=0.8))]
-template.data.scatter3d = [graph_objects.Scatter3d(marker=dict(opacity=0.8))]
-template.data.surface = [graph_objects.Surface()]
-template.data.histogram = [graph_objects.Histogram(marker=dict(line=dict(width=1)))]
-template.data.box = [graph_objects.Box(boxpoints="outliers", notched=False)]
+template.data.scatter = [go.Scatter(marker=dict(opacity=0.8))]
+template.data.scatter3d = [go.Scatter3d(marker=dict(opacity=0.8))]
+template.data.surface = [go.Surface()]
+template.data.histogram = [go.Histogram(marker=dict(line=dict(width=1)))]
+template.data.box = [go.Box(boxpoints="outliers", notched=False)]
 
 
 pio.templates["custom_template"] = template
@@ -67,7 +65,7 @@ def _to_human_readable(text: str):
 
 
 def _prepare_labels(
-    df: pandas.DataFrame,
+    df: pd.DataFrame,
     labels: List[Optional[str]],
     replace_nones: Union[bool, List[bool]] = True,
 ):
@@ -81,7 +79,7 @@ def _prepare_labels(
     if isinstance(replace_nones, bool):
         replace_nones = [replace_nones] * len(labels)
 
-    for i in range(len(labels)):
+    for i, lab in enumerate(labels):
         lab = labels[i]
         if replace_nones[i] and (lab is None):
             lab = df.columns[i]
@@ -95,7 +93,7 @@ def _prepare_labels(
 
 
 def box_and_whisker(
-    df: pandas.DataFrame,
+    df: pd.DataFrame,
     label_x: Optional[str] = None,
     label_y: Optional[str] = None,
     label_x2: Optional[str] = None,
@@ -142,7 +140,7 @@ def box_and_whisker(
 
 
 def histogram(
-    df: pandas.DataFrame,
+    df: pd.DataFrame,
     label_x: Optional[str] = None,
     label_y: Optional[str] = None,
     label_colour: Optional[str] = None,
@@ -204,7 +202,7 @@ def histogram(
 
 
 def multiple_histogram(
-    df: pandas.DataFrame,
+    df: pd.DataFrame,
     label_x: str,
     label_group: str,
     label_y: Optional[str] = None,
@@ -239,7 +237,7 @@ def multiple_histogram(
         df, [label_x, label_y, label_group], replace_nones=[True, False, False]
     )
 
-    fig = graph_objects.Figure(
+    fig = go.Figure(
         layout=dict(
             title=title,
             xaxis_title_text=axis_labels[label_x],
@@ -261,7 +259,7 @@ def multiple_histogram(
             y = dat[selected_columns[1]]
 
         fig.add_trace(
-            graph_objects.Histogram(
+            go.Histogram(
                 x=x,
                 y=y,
                 histfunc=histfunc,
@@ -318,44 +316,44 @@ def line_2D(
     if isinstance(trendline, tuple):
         trendline = [trendline]
 
-    x = numpy.array([])
-    y = numpy.array([])
+    x = np.array([])
+    y = np.array([])
 
     if len(x_range) == 2:
-        x_vals = numpy.linspace(x_range[0], x_range[1], num=200)
+        x_vals = np.linspace(x_range[0], x_range[1], num=200)
     else:
         # X-range is interpreted as x_vals
-        x_vals = numpy.array(x_range)
+        x_vals = np.array(x_range)
         x_vals.sort()
 
         # Rewrite x_range to actually be an x-axis range
         x_range = [x_vals[0], x_vals[-1]]
 
-    names = []
+    names = []  # type: ignore
 
     if isinstance(trendline, dict):
         for cur in trendline.items():
             name = cur[0]
-            x = numpy.concatenate([x, x_vals])
+            x = np.concatenate([x, x_vals])
             names = names + ([name] * len(x_vals))
-            y = numpy.concatenate([y, cur[1]])
+            y = np.concatenate([y, cur[1]])
     else:
-        for cur in trendline:
+        for cur in trendline:  # type: ignore
             name = cur[0]
-            x = numpy.concatenate([x, x_vals])
+            x = np.concatenate([x, x_vals])
             names = names + ([name] * len(x_vals))
-            y = numpy.concatenate([y, cur[1](x=x_vals)])
+            y = np.concatenate([y, cur[1](x=x_vals)])  # type: ignore
 
-    data = dict()
+    data = {}
     data[label_x] = x
     data[label_y] = y
-    data[legend_title] = names
+    data[legend_title] = names  # type: ignore
 
-    df = pandas.DataFrame(data)
+    df = pd.DataFrame(data)
 
     # Pick a title if none provided and we only have one function
     if (title is None) and (len(trendline) == 1):
-        title = trendline[0][0]
+        title = trendline[0][0]  # type: ignore
 
     # Create as a 2d scatter but with lines
     fig = scatter_2D(
@@ -374,7 +372,7 @@ def line_2D(
 
 
 def scatter_2D(
-    df: pandas.DataFrame,
+    df: pd.DataFrame,
     label_x: Optional[str] = None,
     label_y: Optional[str] = None,
     label_colour: Optional[str] = None,
@@ -438,13 +436,13 @@ def scatter_2D(
 
     # Create trendlines
     if trendline is not None:
-        if isinstance(trendline, Callable):
-            trendline = [trendline]
+        if isinstance(trendline, Callable):  # type: ignore
+            trendline = [trendline]  # type: ignore
         x_min = min(df[selected_columns[0]]) if x_range is None else x_range[0]
         x_max = max(df[selected_columns[0]]) if x_range is None else x_range[1]
-        evaluate_for = numpy.linspace(x_min, x_max, num=200)
+        evaluate_for = np.linspace(x_min, x_max, num=200)
         shapes = []
-        for t, colour in zip(trendline, colours_trendline):
+        for t, colour in zip(trendline, colours_trendline):  # type: ignore
             y_vals = t(evaluate_for)
             path = "M" + " L ".join(
                 [str(c[0]) + " " + str(c[1]) for c in zip(evaluate_for, y_vals)]
@@ -468,7 +466,7 @@ def scatter_2D(
 
 
 def scatter_3D(
-    df: pandas.DataFrame,
+    df: pd.DataFrame,
     label_x: Optional[str] = None,
     label_y: Optional[str] = None,
     label_z: Optional[str] = None,
@@ -562,15 +560,13 @@ def surface(
     # though this appears to be counter to the documentation.
     # If z is indexed [x, y] the result is flipped.
     # Potentially there is a bug here somewhere causing this issue or in plotly itself
-    z = numpy.zeros((y_values.shape[0], x_values.shape[0]))
+    z = np.zeros((y_values.shape[0], x_values.shape[0]))
     for i_x in range(x_values.shape[0]):
         for i_y in range(y_values.shape[0]):
             z[i_y, i_x] = calc_z(x_values[i_x], y_values[i_y])
 
     # Create a graph of cost
-    fig = graph_objects.Figure(
-        data=[graph_objects.Surface(x=x_values, y=y_values, z=z)]
-    )
+    fig = go.Figure(data=[go.Surface(x=x_values, y=y_values, z=z)])
     fig.update_layout(
         title=title,
         scene_xaxis_title=axis_title_x,
@@ -589,7 +585,7 @@ def surface(
     return fig
 
 
-def model_to_surface_plot(model, plot_features: List[str], data: pandas.DataFrame):
+def model_to_surface_plot(model, plot_features: List[str], data: pd.DataFrame):
     """Plots two features of a model as a surface. Other values are set at their means
 
     model:          A model that accepts a dataframe for prediction
@@ -602,11 +598,11 @@ def model_to_surface_plot(model, plot_features: List[str], data: pandas.DataFram
 
     other_features = [f for f in data.columns if f not in plot_features]
 
-    means = numpy.average(data[other_features], axis=0)
-    mins = numpy.min(data[plot_features], axis=0)
-    maxes = numpy.max(data[plot_features], axis=0)
+    means = np.average(data[other_features], axis=0)
+    mins = np.min(data[plot_features], axis=0)
+    maxes = np.max(data[plot_features], axis=0)
 
-    df = pandas.DataFrame()
+    df = pd.DataFrame()
 
     for f, m in zip(other_features, means):
         df[f] = [m]
@@ -621,12 +617,8 @@ def model_to_surface_plot(model, plot_features: List[str], data: pandas.DataFram
         return model.predict(df)
 
     # Create a 3d plot of predictions
-    x_vals = numpy.array(
-        numpy.linspace(mins[plot_features[0]], maxes[plot_features[0]], 20)
-    )
-    y_vals = numpy.array(
-        numpy.linspace(mins[plot_features[1]], maxes[plot_features[1]], 20)
-    )
+    x_vals = np.array(np.linspace(mins[plot_features[0]], maxes[plot_features[0]], 20))
+    y_vals = np.array(np.linspace(mins[plot_features[1]], maxes[plot_features[1]], 20))
 
     return surface(
         x_vals,
@@ -640,7 +632,7 @@ def model_to_surface_plot(model, plot_features: List[str], data: pandas.DataFram
 
 
 def save_plot_as_image(
-    fig, file="./plot.jpg", width=None, height="400", scale=1, format="jpg"
+    fig, file="./plot.jpg", width=None, height="400", scale=1, img_format="jpg"
 ):
     """
     Convert a figure to a static image and write it to a file or writeable object
@@ -651,7 +643,7 @@ def save_plot_as_image(
         fig - Figure object or dict representing a figure
         file (str or writeable) - A string representing a local file path
             or a writeable object (e.g. an open file descriptor)
-        format (str or None) - The desired image format:
+        img_format (str or None) - The desired image format:
 
                 'png'
                 'jpg' or 'jpeg'
@@ -675,7 +667,7 @@ def save_plot_as_image(
         width=width,
         height=height,
         scale=scale,
-        format=format,
+        format=img_format,
         engine="kaleido",
     )
 
@@ -716,8 +708,6 @@ def plot_oneway_anova_p_values(
             "p_value": "P-Value",
             "index": "Feature",
         },
-        width=1400,
-        height=800,
     )
     fig.show()
 
@@ -865,8 +855,11 @@ def plot_boxes(
 
 def plot_classifier_results(
     classifier: ClassifierMixin,
-    X_test: pd.DataFrame,
-    y_test: pd.Series,
+    X: pd.DataFrame,
+    y_true: pd.Series,
+    y_pred: Union[pd.Series, None] = None,
+    y_pred_proba: Union[pd.Series, None] = None,
+    title: str = "Classifier Results",
 ) -> None:
     """
     Plots the confusion_matrix, precision_recall_curve and roc_curve of a
@@ -874,10 +867,12 @@ def plot_classifier_results(
 
     Args:
         classifier (ClassifierMixin): sklearn Classifier
-        X_test (pd.DataFrame): test data
-        y_test (pd.Series): true values
+        X (pd.DataFrame): test data
+        y_true (pd.Series): true values
+        y_pred (pd.Series): predicted values
+        y_pred_proba (pd.Series): predicted values probabilities
     """
-    if not is_classifier(classifier):
+    if (y_pred_proba is None or y_pred is None) and not is_classifier(classifier):
         raise ValueError(f"{classifier} is not a classifier.")
 
     _, ax = plt.subplots(
@@ -886,28 +881,47 @@ def plot_classifier_results(
         figsize=(24, 8),
     )
 
-    plot_confusion_matrix(
-        classifier,
-        X_test,
-        y_test,
-        ax=ax[0],
-    )
+    if y_pred_proba is None or y_pred is None:
+        ConfusionMatrixDisplay.from_estimator(
+            classifier,
+            X,
+            y_true,
+            ax=ax[0],
+        )
+        PrecisionRecallDisplay.from_estimator(
+            classifier,
+            X,
+            y_true,
+            name=classifier.__class__.__name__,
+            ax=ax[1],
+        )
+        RocCurveDisplay.from_estimator(
+            classifier,
+            X,
+            y_true,
+            name=classifier.__class__.__name__,
+            ax=ax[2],
+        )
+    else:
+        ConfusionMatrixDisplay.from_predictions(
+            y_true,
+            y_pred,
+            ax=ax[0],
+        )
+        PrecisionRecallDisplay.from_predictions(
+            y_true,
+            y_pred_proba,
+            name=classifier.__class__.__name__,
+            ax=ax[1],
+        )
+        RocCurveDisplay.from_predictions(
+            y_true,
+            y_pred_proba,
+            name=classifier.__class__.__name__,
+            ax=ax[2],
+        )
 
-    plot_precision_recall_curve(
-        classifier,
-        X_test,
-        y_test,
-        name=classifier.__class__.__name__,
-        ax=ax[1],
-    )
-
-    plot_roc_curve(
-        classifier,
-        X_test,
-        y_test,
-        name=classifier.__class__.__name__,
-        ax=ax[2],
-    )
+    plt.suptitle(title)
 
     plt.show()
 
@@ -1001,7 +1015,7 @@ def plot_pca_2d(
 def plot_top_words(model, feature_names, n_top_words, n_topics, title):
     n_cols = 5
     n_lines = int(np.ceil(min(n_topics, model.n_components) / n_cols))
-    fig, axes = plt.subplots(n_lines, n_cols, figsize=(30, 10), sharex=True)
+    fig, axes = plt.subplots(n_lines, n_cols, figsize=(30, n_lines * 5), sharex=True)
     axes = axes.flatten()
     for topic_idx, topic in enumerate(model.components_[0:n_topics]):
         top_features_ind = topic.argsort()[: -n_top_words - 1 : -1]

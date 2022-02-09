@@ -51,20 +51,81 @@ def download_extract_zip(
     if r.status_code != 200:
         raise ValueError(f"Failed to download {zip_file_url}")
 
-    # Check if zip file is OK
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    if z.testzip() is not None:
-        raise ValueError(f"Failed to extract {zip_file_url}")
+    with zipfile.ZipFile(io.BytesIO(r.content)) as z:
+        # Check if zip file is OK
+        if z.testzip() is not None:
+            raise ValueError(f"Failed to extract {zip_file_url}")
 
-    # Check if content path exists
-    if not os.path.exists(target_path):
-        logging.info("Creating %s", target_path)
-        os.makedirs(target_path)
+        # Check if content path exists
+        if not os.path.exists(target_path):
+            logging.info("Creating %s", target_path)
+            os.makedirs(target_path)
 
-    # Extract files from zip
-    logging.info("Extracting %s to %s", zip_file_url, target_path)
-    z.extractall(target_path)
-    logging.info("Extracted %s to %s", zip_file_url, target_path)
+        # Extract files from zip
+        logging.info("Extracting %s to %s", zip_file_url, target_path)
+        z.extractall(target_path)
+        logging.info("Extracted %s to %s", zip_file_url, target_path)
+
+
+def load_data_from_csv(
+    data_path: str,
+    file_name: str,
+    sep: str = ",",
+    header: int = 0,
+    index_col: int = None,
+    na_values: str = "",
+    skip_rows: int = 0,
+    skip_footer: int = 0,
+    usecols: list = None,
+    nrows: int = None,
+    dtype: dict = None,
+    engine: str = "c",
+    encoding: str = "utf-8",
+) -> pd.DataFrame:
+    """
+    Load data from csv file.
+
+    Args:
+        data_path: Path to data.
+        file_name: Name of file to load.
+        sep: Delimiter to use.
+        header: Row to use as header.
+        index_col: Column to use as index.
+        na_values: String to use for missing values.
+        skip_rows: Number of rows to skip.
+        skip_footer: Number of rows to skip at the end.
+        usecols: Columns to use.
+        nrows: Number of rows to load.
+        dtype: Data type to use.
+        engine: Engine to use.
+        encoding: Encoding to use.
+
+    Returns:
+        DataFrame with loaded data.
+    """
+    file_path = os.path.join(data_path, file_name)
+
+    if not os.path.exists(file_path):
+        logging.error("Data not found, please run `make dataset`")
+        raise ValueError(f"File {file_path} does not exist")
+
+    logging.info(f"Data found, loading from {file_path}")
+    df = pd.read_csv(
+        file_path,
+        sep=sep,
+        header=header,
+        index_col=index_col,
+        na_values=na_values,
+        skiprows=skip_rows,
+        skipfooter=skip_footer,
+        usecols=usecols,
+        nrows=nrows,
+        dtype=dtype,
+        engine=engine,
+        encoding=encoding,
+    )
+
+    return df
 
 
 def reduce_dataframe_memory_usage(
@@ -82,7 +143,7 @@ def reduce_dataframe_memory_usage(
     Returns:
         pd.DataFrame: dataframe with reduced memory usage.
     """
-    start_mem = round(df.memory_usage().sum() / 1024 ** 2, 2)
+    start_mem = round(df.memory_usage().sum() / 1024**2, 2)
     logging.info("Memory usage of dataframe is %d MB", start_mem)
 
     # Iterate through columns
@@ -130,7 +191,7 @@ def reduce_dataframe_memory_usage(
             else:
                 df[col] = df[col].astype("float64")
 
-    end_mem = round(df.memory_usage().sum() / 1024 ** 2, 2)
+    end_mem = round(df.memory_usage().sum() / 1024**2, 2)
     logging.info("Memory usage after optimization is %d MB", end_mem)
     if start_mem > 0:
         logging.info(
@@ -138,3 +199,26 @@ def reduce_dataframe_memory_usage(
         )
 
     return df
+
+
+def balance_sample(df: pd.DataFrame, column: str, sample_size: int) -> pd.DataFrame:
+    """
+    Samples a dataframe to a given size, balancing the classes.
+
+    Args:
+        df (pd.DataFrame): Dataframe to sample.
+        column (str): Column to balance and sample by.
+        sample_size (int): Sample size.
+
+    Returns:
+        pd.DataFrame: Sampled and balanced dataframe.
+    """
+    return (
+        df.groupby(column, group_keys=False)
+        .apply(
+            lambda x: x.sample(
+                n=int(sample_size / df[column].nunique()), random_state=42
+            )
+        )
+        .reset_index(drop=True)
+    )
