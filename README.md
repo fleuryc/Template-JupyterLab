@@ -46,7 +46,20 @@ source env/bin/activate
 make install
 ```
 
+### Environment variables
+
+- Set environment variable values in [.env](.env) file.
+
+
 ## Usage
+
+### Download data
+
+Download, extract and upload to Azure Cityscape zip files.
+
+```bash
+make dataset
+```
 
 ### Run Notebook
 

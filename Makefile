@@ -62,9 +62,9 @@ requirements-dev.txt: check-system check-venv ## Create requirements-dev.txt fil
 requirements.txt: check-system check-venv ## Create requirements.txt file
 	@echo ">>> Creating 'requirements.txt' file..."
 	pip install --upgrade pip
-	pip install --upgrade kaggle jupyterlab ipykernel ipywidgets widgetsnbextension \
-		graphviz python-dotenv requests matplotlib seaborn plotly shap numpy \
-		statsmodels pandas sklearn nltk gensim pyLDAvis spacy transformers tensorflow 
+	pip install --upgrade jupyterlab ipykernel ipywidgets widgetsnbextension \
+		graphviz python-dotenv requests matplotlib seaborn plotly numpy \
+		statsmodels pandas sklearn tensorflow transformers 
 	pip freeze | grep -v "pkg_resources" > requirements.txt
 	@echo ">>> OK."
 	@echo ""
@@ -158,9 +158,9 @@ clean-pycache: ## Remove python cache files
 	@echo ""
 
 .PHONY: dataset
-dataset: ## Download and extract dataset from Kaggle
+dataset: ## Download and extract dataset
 	@echo ">>> Downloading and saving data files..."
-	python -m src.data.make-dataset -t data/raw/api/
+	python -m src.data.make-dataset -t data/raw/
 	@echo ">>> OK."
 	@echo ""
 
