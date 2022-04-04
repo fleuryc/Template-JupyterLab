@@ -118,7 +118,7 @@ tensorflow-io-gcs-filesystem==0.24.0
 termcolor==1.1.0
 terminado==0.13.3
 testpath==0.6.0
-tf-estimator-nightly==2.9.0.dev2022032908
+tf-estimator-nightly==2.10.0.dev2022040408
 threadpoolctl==3.1.0
 tokenizers==0.11.6
 tornado==6.1
