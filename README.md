@@ -48,7 +48,7 @@ make install
 
 ### Environment variables
 
-- Set environment variable values in [.env](.env) file.
+- Set environment variable values in [.env](.env) file (copy or rename [.env.example](.env.example)).
 
 
 ## Usage
