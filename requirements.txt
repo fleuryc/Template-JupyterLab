@@ -237,6 +237,8 @@ torch==1.11.0
 tornado==6.1
 tqdm==4.64.0
 traitlets==5.2.0
+types-requests==2.27.25
+types-urllib3==1.26.14
 typing_extensions==4.2.0
 tzdata==2022.1
 tzlocal==4.2
