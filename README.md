@@ -39,7 +39,7 @@ source env/bin/activate
 ### Dependencies
 
 ```bash
-# pip install kaggle jupyterlab ipykernel ipywidgets widgetsnbextension graphviz python-dotenv requests matplotlib seaborn plotly shap numpy statsmodels pandas sklearn nltk gensim pyLDAvis spacy transformers tensorflow
+# pip install jupyterlab ipykernel ipywidgets widgetsnbextension graphviz python-dotenv requests matplotlib seaborn plotly bokeh dtale lux-api pandas-profiling autoviz great_expectations popmon numpy statsmodels pandas modin[ray] sklearn torch tensorflow
 # > or :
 # pip install -r requirements.txt
 # > or just :
