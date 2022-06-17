@@ -132,7 +132,7 @@ nbformat==5.4.0
 nest-asyncio==1.5.5
 networkx==2.8
 nltk==3.7
-notebook==6.4.11
+notebook==6.4.12
 notebook-shim==0.1.0
 numpy==1.22.3
 nvidia-ml-py3==7.352.0
