@@ -1,3 +1,6 @@
+## Include project environment variables if necessary
+# include .env
+
 SHELL = /bin/bash
 
 PYTHON = python3.9
@@ -8,8 +11,7 @@ PYTHON = python3.9
 .PHONY: check-system
 check-system: ## Check system for necessary tools
 	@echo ">>> Checking python..."
-	@${PYTHON} --version || { echo ">>> Python 3.9 must be installed !"; exit 1; }
-	${PYTHON} -m ensurepip --upgrade
+	@${PYTHON} --version || { echo ">>> $(PYTHON) must be installed !"; exit 1; }
 	@echo ">>> OK."
 	@echo ""
 
@@ -154,7 +156,8 @@ qa: isort format lint bandit mypy test ## Run the full QA process
 .PHONY: clean-pycache
 clean-pycache: ## Remove python cache files
 	@echo ">>> Removing python artifacts..."
-	rm -rf ./**/*.pyc ./**/__pycache__
+	find . -name __pycache__ -type d -exec rm -rf {} \;
+	find . -name *.pyc -type f -exec rm -f {} \;
 	@echo ">>> OK."
 	@echo ""
 
@@ -186,9 +189,16 @@ clean-reults: ## Delete result files
 	@echo ">>> OK."
 	@echo ""
 
+.PHONY: clean-build
+clean-build: ## Delete result files
+	@echo ">>> Removing result files..."
+	find ./build/ -type f -not -name ".gitignore" -delete
+	@echo ">>> OK."
+	@echo ""
+
 .PHONY: clean
-clean: clean-venv clean-mypy clean-test clean-pycache clean-dataset clean-notebook clean-results ## Remove all file artifacts
+clean: clean-venv clean-mypy clean-test clean-pycache clean-dataset clean-notebook clean-results clean-build  ## Remove all file artifacts
 
 .PHONY: help
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'
+help:  ## Print help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sed -e 's/Makefile://' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

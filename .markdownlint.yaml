@@ -15,3 +15,7 @@ MD030:
 # https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#md043---required-heading-structure
 # MD043/required-headings/required-headers - Required heading structure
 MD043: false
+
+# https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#md013---line-length
+# MD013/line-length/line-length - Line length
+MD013: false
