@@ -1,25 +1,28 @@
+# Project
+
 [![Python application](https://github.com/fleuryc/Template-JupyterLab/actions/workflows/python-app.yml/badge.svg)](https://github.com/fleuryc/Template-JupyterLab/actions/workflows/python-app.yml)
 [![CodeQL](https://github.com/fleuryc/Template-JupyterLab/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/fleuryc/Template-JupyterLab/actions/workflows/codeql-analysis.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b03fbc514ea44fce83fe471896566cfd)](https://www.codacy.com/gh/fleuryc/Template-JupyterLab/dashboard)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/b03fbc514ea44fce83fe471896566cfd)](https://www.codacy.com/gh/fleuryc/Template-JupyterLab/dashboard)
 
-- [Project](#project)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Virtual environment](#virtual-environment)
-    - [Dependencies](#dependencies)
-  - [Usage](#usage)
-    - [Run Notebook](#run-notebook)
-    - [Quality Assurance](#quality-assurance)
-  - [Troubleshooting](#troubleshooting)
-
-* * *
-
-# Project
-
 -   What ?
 -   Why ?
 -   How ?
+
+**Table of Contents**
+
+-   [Installation](#installation)
+    -   [Prerequisites](#prerequisites)
+    -   [Virtual environment](#virtual-environment)
+    -   [Dependencies](#dependencies)
+    -   [Environment variables](#environment-variables)
+-   [Usage](#usage)
+    -   [Download data](#download-data)
+    -   [Run Notebook](#run-notebook)
+    -   [Quality Assurance](#quality-assurance)
+-   [Troubleshooting](#troubleshooting)
+
+---
 
 ## Installation
 
@@ -48,8 +51,7 @@ make install
 
 ### Environment variables
 
-- Set environment variable values in [.env](.env) file (copy or rename [.env.example](.env.example)).
-
+-   Set environment variable values in [.env](.env) file (copy or rename [.env.example](.env.example)).
 
 ## Usage
 
