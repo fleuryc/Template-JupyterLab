@@ -242,7 +242,7 @@ tzdata==2022.1
 tzlocal==4.2
 urllib3==1.26.9
 virtualenv==20.15.0
-visions==0.7.4
+visions==0.7.5
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==1.3.3
