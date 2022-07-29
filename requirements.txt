@@ -118,7 +118,7 @@ matplotlib==3.5.2
 matplotlib-inline==0.1.3
 mccabe==0.6.1
 missingno==0.4.2
-mistune==0.8.4
+mistune==2.0.3
 modin==0.15.2
 msgpack==1.0.4
 multidict==6.0.2
