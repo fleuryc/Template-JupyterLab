@@ -136,7 +136,7 @@ notebook==6.4.12
 notebook-shim==0.1.0
 numpy==1.23.0
 nvidia-ml-py3==7.352.0
-oauthlib==3.2.0
+oauthlib==3.2.1
 opencensus==0.9.0
 opencensus-context==0.1.2
 openpyxl==3.0.10
