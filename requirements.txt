@@ -22,7 +22,7 @@ blessed==1.19.1
 bokeh==2.4.3
 Brotli==1.0.9
 cachetools==5.2.0
-certifi==2022.6.15
+certifi==2022.12.7
 cffi==1.15.0
 charset-normalizer==2.0.12
 click==8.1.3
