@@ -159,7 +159,7 @@ platformdirs==2.5.2
 plotly==5.9.0
 pluggy==1.0.0
 popmon==0.10.2
-prometheus-client==0.13.1
+prometheus-client==0.16.0
 prompt-toolkit==3.0.29
 protobuf==3.19.4
 psutil==5.9.1
