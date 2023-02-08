@@ -30,7 +30,7 @@ colorama==0.4.5
 colorcet==3.0.0
 colorful==0.5.4
 coverage==6.4.1
-cryptography==37.0.2
+cryptography==39.0.1
 cycler==0.11.0
 dash==2.5.1
 dash-bootstrap-components==1.1.0
